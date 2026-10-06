@@ -38,12 +38,13 @@ To bake the assets into the app bundle instead, build with `BUNDLE_HL_ASSETS=1` 
 
 ## Build from source
 
-Start from a checkout of this repository. It links two local Swift packages by relative path, so they must sit next to your checkout, in the same parent folder, named exactly `RAVESDK` and `RAVEEngine`:
+Start from a checkout of this repository. It links three local Swift packages by relative path, so they must sit next to your checkout, in the same parent folder, named exactly `RAVESDK`, `RAVEEngine` and `DebugTrace`:
 
 ```bash
 cd ..        # the folder that holds your checkout
 git clone https://github.com/illixion/RAVESDK.git
 git clone https://github.com/illixion/RAVEEngine.git
+git clone https://github.com/illixion/DebugTrace.git
 cd -         # back into the checkout
 ```
 
@@ -61,7 +62,7 @@ Skipping the ANGLE step fails later as a linker error rather than a clear messag
 
 1. Open `LambdaVision/LambdaVision.xcodeproj`.
 2. In the LambdaVision target's signing settings, set `DEVELOPMENT_TEAM` to your own team. If Xcode reports that the bundle identifier isn't available to your team, change it to one of your own and use the same value for `BUILD_BUNDLE_ID` above.
-3. Build and run on your Vision Pro. Xcode's pre-build step (`scripts/pre-build.sh`) fetches the pinned xash3d-fwgs and hlsdk-portable sources and MoltenVK, applies the visionOS patches, and checks that `libxash.a` exists.
+3. Build and run on your Vision Pro. For playing, switch the scheme's Run action to Release (Product › Scheme › Edit Scheme › Run › Build Configuration): Debug builds are unoptimized (`-Onone`) and noticeably slower. Xcode's pre-build step (`scripts/pre-build.sh`) fetches the pinned xash3d-fwgs and hlsdk-portable sources and MoltenVK, applies the visionOS patches, and checks that `libxash.a` exists.
 
 From the command line instead (find the UDID with `xcrun xctrace list devices`):
 
@@ -69,11 +70,11 @@ From the command line instead (find the UDID with `xcrun xctrace list devices`):
 xcodebuild -project LambdaVision/LambdaVision.xcodeproj \
   -scheme LambdaVision \
   -destination 'id=YOUR_AVP_UDID' \
-  -configuration Debug build
+  -configuration Release build
 
 xcrun devicectl device install app \
   --device YOUR_AVP_UDID \
-  ~/Library/Developer/Xcode/DerivedData/LambdaVision-*/Build/Products/Debug-xros/LambdaVision.app
+  ~/Library/Developer/Xcode/DerivedData/LambdaVision-*/Build/Products/Release-xros/LambdaVision.app
 
 # Optional: launch it and stream its log
 xcrun devicectl device process launch \
